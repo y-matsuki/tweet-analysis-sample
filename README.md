@@ -34,14 +34,14 @@ rethinkdb --directory data/rethink
 
 ```shell
 cd tweet-analysis-sample
-python process_stream_rethink.py
+python stream_to_rethink.py
 ```
 
 ### Tweet処理起動
 
 ```shell
 cd tweet-analysis-sample
-python process_stream_rethink.py
+python grouping_tweets.py
 ```
 
 ### 確認(RethinkDB)
