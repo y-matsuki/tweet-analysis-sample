@@ -38,3 +38,34 @@ python test.py
 ## cleanup
 cd ..
 rm mecab-python-0.996.tar.gz
+
+# Install User Dictionary
+sudo wget http://mirror.centos.org/centos/6/os/x86_64/Packages/nkf-2.0.8b-6.2.el6.x86_64.rpm
+sudo rpm -ivh nkf-2.0.8b-6.2.el6.x86_64.rpm
+sudo rm nkf-2.0.8b-6.2.el6.x86_64.rpm
+wget https://mecab.googlecode.com/files/mecab-ipadic-2.7.0-20070801.model.bz2
+bzip2 -d mecab-ipadic-2.7.0-20070801.model.bz2
+sed -i "s/charset: euc-jp/charset: utf-8/g" mecab-ipadic-2.7.0-20070801.model
+nkf -w --overwrite mecab-ipadic-2.7.0-20070801.model
+nkf -w --overwrite mecab-ipadic-2.7.0-20070801/*.def
+
+# Create User Dictionary
+echo '東京特許許可局,,,,名詞,一般,*,*,*,*,とうきょうとっきょきょかきょく,トウキョウトッキョキョカキョク,トウキョウトッキョキョカキョク' >> my_dic.csv
+# コストの計算
+/usr/local/libexec/mecab/mecab-dict-index\
+ -m ../mecab-ipadic-2.7.0-20070801.model\
+ -d ../mecab-ipadic-2.7.0-20070801\
+ -u my_dic_with_cost.csv\
+ -f utf-8\
+ -t utf-8\
+ -a my_dic.csv
+# 辞書の作成
+/usr/local/libexec/mecab/mecab-dict-index\
+ -m ../mecab-ipadic-2.7.0-20070801.model\
+ -d ../mecab-ipadic-2.7.0-20070801\
+ -u my_dic.dic\
+ -f utf-8\
+ -t utf-8\
+ -a my_dic_with_cost.csv
+cp /usr/local/etc/mecabrc ~/.mecabrc
+echo "userdic = $(pwd)/my_dic.dic" >> ~/.mecabrc
