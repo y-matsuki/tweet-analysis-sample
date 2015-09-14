@@ -12,7 +12,9 @@ if __name__ == '__main__':
     from_time = int(time.mktime((datetime.today() - timedelta(days=1)).timetuple()) * 1000)
     to_time = int(time.mktime(datetime.today().timetuple()) * 1000)
     cursor = r.db('mecab').table('dict').between(
-        from_time, to_time, index='time').order_by(
-        index=r.desc('time')).limit(10).run()
+        from_time, to_time, index='time').group('word').ungroup().map(
+            lambda doc: { 'word': doc['group'], 'total': doc['reduction'].count()}
+        ).order_by(r.desc('total')).limit(10).run()
     for item in cursor:
         dic_csv.write(''.join([item['word'], u",,,,名詞,一般,*,*,*,*,", item['word'], ',,\n']).encode('utf-8'))
+        print(': '.join([str(item['total']), item['word']]))
