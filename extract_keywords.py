@@ -10,6 +10,7 @@ r.connect('localhost', 28015).repl()
 try:
     r.db_create('mecab').run()
     r.db('mecab').table_create('dict').run()
+    r.db('mecab').table('dict').indexCreate('time')
 except ReqlRuntimeError:
     pass
 
